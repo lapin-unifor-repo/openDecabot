@@ -7,8 +7,8 @@
  */
 
 #include <ESP8266WiFi.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include <ESPAsyncTCP.h>        //tested on 1.2.4 from https://github.com/dvarrel/ESPAsyncTCP
+#include <ESPAsyncWebServer.h>  //tested on https://github.com/lacamera/ESPAsyncWebServer
 #include <DNSServer.h>
 #include <Servo.h>
 #include <Adafruit_GFX.h>       // tested on 1.11.10
