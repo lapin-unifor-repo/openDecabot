@@ -3,8 +3,34 @@
  * Daniel Chagas, Nicole Akemi Takeda, Cauan Oliveira, Paulo Roberto Gomes
  *
  * Robô cria uma rede wifi com captive portal que exibe botões de controle
- * remoto que controlam os servo motores. 
+ * remoto que controlam os servo motores ligados às portas D0 (motor direito)
+ * e D6 (motor esquerdo). 
+ *
+ * To use:
+ * - Access the Wi-Fi network 'MeuDecabot' with a device such as smartphone,
+ *   tablet or computer, and click on the login message. 
+ * - You must see a page with a title and buttons who can control the movement
+ * 
+ * Hardware:
+ * Wemos D1 Mini - https://www.wemos.cc/en/latest/d1/index.html
+ * Matrix Led Shield - https://github.com/wemos/WEMOS_Matrix_LED_Shield_Arduino_Library
+ * Decabot Mini Shield
+ * 
+ * PORTS                             _____________
+ *                                  /             \
+ *                             RST |*  ---------  *| TX 
+ *           battery ---------- A0 |* |         | *| RX
+ *         SERVO esq --GPIO16-- D0 |* |  ESP    | *| D1 ---I2C--- SCL
+ *    led matrix CLK ---------- D5 |* |  8266   | *| D2 ---I2C--- SDA
+ *         SERVO dir --GPIO12 - D6 |* |         | *| D3 --GPIO0-- SERVO
+ *    led matrix DIN ---------- D7 |* |         | *| D4 --GPIO2
+ *            buzzer --GPIO15-- D8 |*  ---------  *| GND
+ *                             3V3 |*             *| 5V
+ *                                  \              |
+ *                            reset  |      D1mini |
+ *                                    \___________/
  */
+
 
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>        //tested on 1.2.4 from https://github.com/dvarrel/ESPAsyncTCP
@@ -16,6 +42,11 @@
 #define buzzer D8
 
 MLED matrix(7); // intensidade 7 (máximo)
+
+int slowSpeed = 50; //number between 1 and 180 max.
+int fastSpeed = 100; //number between 1 and 180 max.
+//To vcalibrate motors: Positive mnumbers give more right movement
+int calibration = 0; //number between -50 and 50 to balance motors
 
 int lpos = 1; // posição olho esquerdo
 int rpos = 6; // posição olho direito
@@ -39,6 +70,24 @@ bool ledState = false;
 
 void notFound(AsyncWebServerRequest *request) {
   request->redirect("/");
+}
+
+void motorLeft(int pot){
+  //run motor on power -100 to 100
+  if(pot ==0){
+    servo0.write(90);
+  } else {
+    servo0.write(90 + map(pot,-100,100,fastSpeed-calibration,-fastSpeed-calibration));
+  }
+}
+
+void motorRight(int pot){
+  //run motor on power -100 to 100
+  if(pot == 0){
+    servo6.write(90);
+  } else {
+    servo6.write(90 - map(pot,-100,100,fastSpeed+calibration,-fastSpeed+calibration));
+  }
 }
 
 void setup() {
@@ -206,32 +255,31 @@ void setup() {
       if (state == "Front") {
         digitalWrite(LED_PIN, LOW);
         ledState = true;
-        servo0.write(30);
-        servo6.write(150);
-
+        motorLeft(100);
+        motorRight(100);
       } else if (state == "Left") {
         digitalWrite(LED_PIN, LOW);
         ledState = true;
-        servo0.write(30);
-        servo6.write(90);
+        motorLeft(50);
+        motorRight(-50);
 
       } else if (state == "Right") {
         digitalWrite(LED_PIN, LOW);
         ledState = true;
-        servo0.write(90);
-        servo6.write(150);
+        motorLeft(-50);
+        motorRight(50);
 
       } else if (state == "Back") {
         digitalWrite(LED_PIN, LOW);
         ledState = true;
-        servo0.write(150);
-        servo6.write(30);
+        motorLeft(-50);
+        motorRight(-50);
 
       } else if (state == "Stop") {
         digitalWrite(LED_PIN, HIGH);
         ledState = false;
-        servo0.write(90);
-        servo6.write(90);
+        motorLeft(0);
+        motorRight(0);
 
       } else {
         request->send(400, "text/plain", "Invalid state");
