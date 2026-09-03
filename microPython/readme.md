@@ -1,4 +1,5 @@
 # MicroPython no openDecabot
+![MicroPython Logo](/images/MicroPython.png)
 
 Para o uso do microPython no openDecabot estmaos escolhendo unificar os tutoriais com a microcotroladora **ESP32 C3**. Apesar de termos tido sucesso também com o Wemos D1 Mini, a plataforma ESP32, com WiFi e Bluetooth aumentam as possibilidades de uso, além da maior capacidade de processamento.
 
@@ -38,8 +39,12 @@ Para usar o microPython você precisa gravar uma firmware específica no seu mic
 	- Linux (_substitua a porta /dev com a sua_): `esptool --port /dev/ttyUSB0 --baud 460800 write-flash --flash_size=detect 0 ESP32_GENERIC_C3-20260824-v1.29.0.bin`
 ## Usando um editor para microPython
 ### Thony, o mais fácil
+![Thony Editor Interface](/images/thony.png)
+
 O editor para python Thony é Open Source e bem simples de instalar e usar. Baixe em https://thonny.org/ e instale no seu sistema. Para configurar seu microcontrolador para usar, vá em `Executar > Configurar interpretador` e defina que está usando um **MicroPython (ESP32)** na porta **detectar automaticamente**. Se tudo correr bem, você conseguirá conversar em python com o ESP32 C3 no seu robo openDecabot pelo terminal no canto inferior da tela. Experimente digitar algum comando simples, como 2 + 2, e veja o resultado. Quem estará respondendo será seu robô, e não seu computador.
 ### ESPIDE, o mais promissor
+![ESP IDE interface](/images/espide.png)
+
 O projeto ESP IDE também é Open Source e roda diretamente no navegador. Nele é possível conectar-se à sua microcontroladora diretamente, e usar códigos python ou editor de blocos. Acesse em https://www.espide.eu/en/ .
 ## Arquivos .py disponíveis
 As pastas aqui disponíveis já trazem um conjunto de arquivos .py que funcionam como drivers para diferentes componentes de um openDecabot. Você pode usá-los com qualquer editor, mas iremos experimentar no ESP IDE. Basta usar o editor para copiar esses aquivos para sua microcontroladora.
